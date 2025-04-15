@@ -38,6 +38,8 @@ public class FacebookAccountController {
 
     @GetMapping("/login")
     public void redirectToFacebook(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
+
+        System.out.println("inside login");
         String facebookOAuthUrl = "https://www.facebook.com/v18.0/dialog/oauth" +
                 "?client_id=" + facebookAppId +
                 "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
