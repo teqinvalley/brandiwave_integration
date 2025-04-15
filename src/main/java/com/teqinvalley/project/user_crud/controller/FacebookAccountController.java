@@ -47,6 +47,7 @@ public class FacebookAccountController {
                 "&response_type=code" +
                 "&state=" + URLEncoder.encode(token, StandardCharsets.UTF_8); // ✅ include JWT as 'state'
         System.out.println("red uri"+redirectUri);
+        System.out.println("DEBUG >>> Facebook Login URL: " + facebookOAuthUrl);
         response.sendRedirect(facebookOAuthUrl);
     }
 
