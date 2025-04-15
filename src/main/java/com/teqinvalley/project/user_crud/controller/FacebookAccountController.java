@@ -61,11 +61,11 @@ public class FacebookAccountController {
 
         String tokenUrl = "https://graph.facebook.com/v18.0/oauth/access_token" +
                 "?client_id=" + facebookAppId +
-                "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
+                "&redirect_uri=" + redirectUri+
                 "&client_secret=" + facebookAppSecret +
                 "&code=" + code;
 
-        System.out.println("token" + tokenUrl);
+        System.out.println("token" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8));
 
         System.out.println("rediecturi"+redirectUri);
         RestTemplate restTemplate = new RestTemplate();
