@@ -100,6 +100,7 @@ public class FacebookAccountController {
 
             response.sendRedirect("http://127.0.0.1:5500/createpost1.html");
 
+
         } catch (HttpClientErrorException e) {
             System.out.println("Facebook API error: " + e.getResponseBodyAsString());
             e.printStackTrace();
