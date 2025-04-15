@@ -65,7 +65,7 @@ public class FacebookAccountController {
                 "&client_secret=" + facebookAppSecret +
                 "&code=" + code;
 
-        System.out.println("token" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8));
+        System.out.println("token" + tokenUrl);
 
         System.out.println("rediecturi"+redirectUri);
         RestTemplate restTemplate = new RestTemplate();
