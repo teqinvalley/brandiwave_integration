@@ -2,15 +2,14 @@ package com.teqinvalley.project.user_crud.controller;
 
 import com.teqinvalley.project.user_crud.dto.request.FacebookAccountDto;
 import com.teqinvalley.project.user_crud.service.IFacebookAccountService;
-import com.teqinvalley.project.user_crud.utils.JwtUtil;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.teqinvalley.project.user_crud.utils.JwtUtil;import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

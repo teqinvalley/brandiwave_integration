@@ -8,11 +8,8 @@ import com.teqinvalley.project.user_crud.dto.request.LoginRequestDto;
 import com.teqinvalley.project.user_crud.model.UserModel;
 import com.teqinvalley.project.user_crud.repository.UserRepository;
 import com.teqinvalley.project.user_crud.service.IAddUserService;
-import com.teqinvalley.project.user_crud.utils.AESUtil;
-//import com.teqinvalley.project.user_crud.utils.JwtUtil;
 import com.teqinvalley.project.user_crud.utils.ResponseUtil;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
