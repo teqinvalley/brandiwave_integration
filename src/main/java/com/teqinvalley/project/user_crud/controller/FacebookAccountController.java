@@ -44,6 +44,7 @@ public class FacebookAccountController {
                 "&scope=pages_show_list,pages_read_engagement,pages_manage_posts" +
                 "&response_type=code" +
                 "&state=" + URLEncoder.encode(token, StandardCharsets.UTF_8); // ✅ include JWT as 'state'
+        System.out.println("red uri"+redirectUri);
         response.sendRedirect(facebookOAuthUrl);
     }
 
@@ -55,19 +56,15 @@ public class FacebookAccountController {
             HttpServletResponse response
     ) throws IOException {
 
-        System.out.println("red" + redirectUri);
-        System.out.println(code);
-        // Step 1: Get Access Token
-        String actualRedirectUri = "http://localhost:9093/userModule/facebook/callback";
-
         String tokenUrl = "https://graph.facebook.com/v18.0/oauth/access_token" +
                 "?client_id=" + facebookAppId +
-                "&redirect_uri=" + URLEncoder.encode(actualRedirectUri, StandardCharsets.UTF_8) +
+                "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
                 "&client_secret=" + facebookAppSecret +
                 "&code=" + code;
 
         System.out.println("token" + tokenUrl);
 
+        System.out.println("rediecturi"+redirectUri);
         RestTemplate restTemplate = new RestTemplate();
         try {
             // STEP 1: Get access token
