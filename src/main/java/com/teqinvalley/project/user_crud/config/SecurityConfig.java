@@ -24,7 +24,7 @@
 //                .authorizeHttpRequests(auth -> auth
 //                        .requestMatchers(
 //                                "/api/v1/auth/**",
-//                                "/api/v1/users/**",
+////                                "/api/v1/users/**",
 //                                "/swagger-ui.html",
 //                                "/swagger-ui/**",
 //                                "/v3/api-docs/**"

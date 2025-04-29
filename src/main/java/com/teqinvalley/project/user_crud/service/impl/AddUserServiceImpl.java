@@ -11,7 +11,6 @@ import com.teqinvalley.project.user_crud.utils.AESUtil;
 import com.teqinvalley.project.user_crud.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -22,6 +21,8 @@ public class AddUserServiceImpl implements IAddUserService {
 
     @Autowired
     JwtUtil jwtUtil;
+
+
     @Override
     public SigUpResponseDto addUser(FirstPageSignupRequestDto firstPageSignupRequestDto) {
         if (userRepository.findByEmail(firstPageSignupRequestDto.getEmail()).isPresent()) {
