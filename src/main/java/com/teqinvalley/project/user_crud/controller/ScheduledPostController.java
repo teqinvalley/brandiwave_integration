@@ -24,18 +24,21 @@ public class ScheduledPostController {
 //        return ResponseEntity.ok(schedule);
 //    }
 @PostMapping("/facebook")
-public ResponseEntity<ScheduledPosts> scheduleFacebook(@RequestBody ScheduleRequestDto request) {
-    return ResponseEntity.ok(postService.schedule("facebook", request));
+public ResponseEntity<ScheduledPosts> scheduleFacebook(@RequestBody ScheduleRequestDto request,  @RequestHeader("Authorization") String authHeader) {
+    String token = authHeader.replace("Bearer ", "");
+    return ResponseEntity.ok(postService.schedule("facebook", request, token));
 }
 
     @PostMapping("/instagram")
-    public ResponseEntity<ScheduledPosts> scheduleInstagram(@RequestBody ScheduleRequestDto request) {
-        return ResponseEntity.ok(postService.schedule("instagram", request));
+    public ResponseEntity<ScheduledPosts> scheduleInstagram(@RequestBody ScheduleRequestDto request, @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        return ResponseEntity.ok(postService.schedule("instagram", request, token  ));
     }
 
-    @PostMapping("/youtube")
-    public ResponseEntity<ScheduledPosts> scheduleYoutube(@RequestBody ScheduleRequestDto request) {
-        return ResponseEntity.ok(postService.schedule("youTube", request));
+    @PostMapping("/youTube")
+    public ResponseEntity<ScheduledPosts> scheduleYoutube(@RequestBody ScheduleRequestDto request, @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        return ResponseEntity.ok(postService.schedule("youTube", request, token));
     }
 
 }

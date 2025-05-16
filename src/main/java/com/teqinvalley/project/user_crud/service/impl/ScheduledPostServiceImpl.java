@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ScheduledPostServiceImpl implements ScheduledPostService {
@@ -26,7 +28,7 @@ public class ScheduledPostServiceImpl implements ScheduledPostService {
     }
 
     @Override
-    public ScheduledPosts schedule(String platform, ScheduleRequestDto request) {
+    public ScheduledPosts schedule(String platform, ScheduleRequestDto request, String accessToken) {
 
         ScheduledPosts post = new ScheduledPosts();
         post.setPlatform(platform);
@@ -39,7 +41,12 @@ public class ScheduledPostServiceImpl implements ScheduledPostService {
         LocalDateTime utcTime = zonedDateTime.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
 
         post.setScheduledTime(utcTime);
-        post.setTimeZone(request.getTimeZone());
+//        post.setTimeZone(request.getTimeZone());
+        post.setTitle(request.getTitle());
+        post.setDescription(request.getDescription());
+        post.setPrivacyStatus(request.getPrivacyStatus());
+        post.setFilePath(request.getFilePath());
+        post.setAccessToken(accessToken);
         return postRepository.save(post);
     }
 
@@ -59,16 +66,26 @@ public class ScheduledPostServiceImpl implements ScheduledPostService {
 
     public void postToPlatform(ScheduledPosts post){
     String endpoint = null;
+        Map<String, Object> body = new HashMap<>();
 
-    switch (post.getPlatform().toLowerCase()){
+        switch (post.getPlatform().toLowerCase()){
         case"facebook":
             endpoint = "http://localhost:9093/userModule/facebook/login";
+            body.put("description", post.getDescription());
+            body.put("imageUrl", post.getTitle());
+            body.put("videoUrl", post.getFilePath());
+            body.put("privacy", post.getPrivacyStatus());
+
             break;
         case "instagram":
             endpoint = "http://localhost:9093/userModule/instagram/login";
             break;
         case "youTube":
-            endpoint = "http://localhost:9093/userModule/youTube";
+            endpoint = "http://localhost:9093/userModule/google/youtube-upload";
+            body.put("title", post.getTitle());
+            body.put("description", post.getDescription());
+            body.put("privacyStatus", post.getPrivacyStatus());
+            body.put("filePath", post.getFilePath());
             break;
         default:
             System.out.println("unsupported platform:" +post.getPlatform());

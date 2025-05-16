@@ -7,4 +7,8 @@ public class ScheduleRequestDto {
 
     private  String timeZone;
     private String scheduledTime;
+    private String title;
+    private String description;
+    private String privacyStatus;
+    private String filePath;
 }

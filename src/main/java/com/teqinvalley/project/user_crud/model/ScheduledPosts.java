@@ -11,9 +11,20 @@ import java.time.LocalDateTime;
 public class ScheduledPosts {
 
     @Id
-    private String Id;
+    private String id;
     private String platform;
     private String timeZone;
     private LocalDateTime scheduledTime;
     private  boolean posted = false;
+    private String title;                // for YouTube
+    private String description;          // for YouTube or optional caption for Instagram
+    private String privacyStatus;        // for YouTube: public, private, unlisted
+
+    // Media fields
+//    private String imageUrl;             // used by Facebook, Instagram
+//    private String videoUrl;             // hosted video URL for Facebook, Instagram
+    private String filePath;             // for local video file path (used by YouTube)
+
+    // OAuth token
+    private String accessToken;
 }
