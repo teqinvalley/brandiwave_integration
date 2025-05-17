@@ -1,0 +1,15 @@
+package com.teqinvalley.project.user_crud.enumeration;
+
+public enum MyProfileDesignation {
+
+    SOCIAL_MEDIA_MANAGER,
+    CONTENT_CREATOR,
+    DIGITAL_MARKETING_SPECIALIST,
+    BRAND_COMMUNICATIONS_OFFICER,
+    COMMUNITY_MANAGER,
+    COPYWRITER,
+    GRAPHIC_DESIGNER,
+    VIDEO_EDITOR,
+    INFLUENCER_MANAGER,
+    SOCIAL_MEDIA_ANALYST
+}
