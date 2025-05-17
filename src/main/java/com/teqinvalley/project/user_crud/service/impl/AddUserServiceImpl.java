@@ -4,7 +4,9 @@ import com.teqinvalley.project.user_crud.dto.request.CompleteUserInfoRequestDto;
 import com.teqinvalley.project.user_crud.dto.request.FirstPageSignupRequestDto;
 import com.teqinvalley.project.user_crud.dto.response.SigUpResponseDto;
 import com.teqinvalley.project.user_crud.exception.UserAlreadyExistException;
+import com.teqinvalley.project.user_crud.model.MyProfile;
 import com.teqinvalley.project.user_crud.model.UserModel;
+import com.teqinvalley.project.user_crud.repository.MyProfileRepository;
 import com.teqinvalley.project.user_crud.repository.UserRepository;
 import com.teqinvalley.project.user_crud.service.IAddUserService;
 import com.teqinvalley.project.user_crud.utils.AESUtil;
@@ -22,6 +24,9 @@ public class AddUserServiceImpl implements IAddUserService {
     @Autowired
     JwtUtil jwtUtil;
 
+    @Autowired
+    MyProfileRepository myProfileRepository;
+
 
     @Override
     public SigUpResponseDto addUser(FirstPageSignupRequestDto firstPageSignupRequestDto) {
@@ -36,6 +41,12 @@ public class AddUserServiceImpl implements IAddUserService {
                 .build();
 
         userRepository.save(userModel);
+
+        MyProfile profile = new MyProfile();
+        profile.setEmail(firstPageSignupRequestDto.getEmail());
+        profile.setFullName("");
+        profile.setCompletedProfile(false);
+        myProfileRepository.save(profile);
         String token = jwtUtil.generateToken(firstPageSignupRequestDto.getEmail());
 
         // Return token + user info
@@ -77,8 +88,15 @@ public class AddUserServiceImpl implements IAddUserService {
         }
         user.setMobileNumber(completeUserInfoRequestDto.getMobileNumber());
         user.setCompletedProfile(true);
-
         userRepository.save(user);
+
+
+        MyProfile profile = myProfileRepository.findByEmail(tokenEmail).orElse(new MyProfile());
+        profile.setEmail(tokenEmail);
+        profile.setFullName(completeUserInfoRequestDto.getFullName());
+        profile.setMobileNumber(completeUserInfoRequestDto.getMobileNumber());
+        profile.setCompletedProfile(true);
+        myProfileRepository.save(profile);
 
         return user;
     }
