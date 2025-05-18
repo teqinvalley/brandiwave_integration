@@ -128,12 +128,12 @@
 <!--        </dependency>-->
 
         <!-- Uncomment to include Spring Security for authentication/authorization -->
-        <!--
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        -->
+
 
     </dependencies>
 
