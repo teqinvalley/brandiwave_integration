@@ -8,6 +8,9 @@ import com.teqinvalley.project.user_crud.dto.request.LoginRequestDto;
 import com.teqinvalley.project.user_crud.model.UserModel;
 import com.teqinvalley.project.user_crud.repository.UserRepository;
 import com.teqinvalley.project.user_crud.service.IAddUserService;
+
+import com.teqinvalley.project.user_crud.utils.AESUtil;
+import com.teqinvalley.project.user_crud.utils.JwtUtil;
 import com.teqinvalley.project.user_crud.utils.ResponseUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +34,12 @@ public class AuthController {
 
     @Autowired
      IAddUserService iAddUserService;
+
+    @Autowired
+    JwtUtil jwtUtil;
+
+    //@Autowired
+    //AESUtil aesUtil;
 
     @PostMapping("/signup")
     public ResponseEntity<CommonResponse> registerUser( @RequestBody FirstPageSignupRequestDto firstPageSignupRequestDto) throws Exception {
@@ -56,19 +65,19 @@ public class AuthController {
 
 
 
-//    @PostMapping("/login")
-//    public ResponseEntity<?> loginUser(@RequestBody LoginRequestDto loginRequest) throws Exception {
-//        UserModel user = userRepository.findByEmail(loginRequest.getEmail())
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        String decrypted = AESUtil.decrypt(user.getPassword());
-//
-//        if (!decrypted.equals(loginRequest.getPassword())) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-//        }
-//
-//        String token = JwtUtil.generateToken(user.getEmail());
-//        return ResponseEntity.ok(Map.of("token", token));
-//    }
+  @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequestDto loginRequest) throws Exception {
+        UserModel user = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String decrypted = AESUtil.decrypt(user.getPassword());
+
+        if (!decrypted.equals(loginRequest.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        }
+
+        String token = jwtUtil.generateToken(user.getEmail());
+        return ResponseEntity.ok(Map.of("token", token));
+    }
 }
 
