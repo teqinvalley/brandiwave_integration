@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,26 +29,28 @@ public class ScheduledPostServiceImpl implements ScheduledPostService {
     }
 
     @Override
-    public ScheduledPosts schedule(String platform, ScheduleRequestDto request, String accessToken) {
+        public ScheduledPosts schedule(String platform, ScheduleRequestDto request, String accessToken) {
 
-        ScheduledPosts post = new ScheduledPosts();
-        post.setPlatform(platform);
-        post.setTimeZone(request.getTimeZone());
+            ScheduledPosts post = new ScheduledPosts();
+            post.setPlatform(platform);
+            post.setTimeZone(request.getTimeZone());
 
 
-        ZoneId zone = ZoneId.of(request.getTimeZone()); // e.g. "Asia/Kolkata"
-        LocalDateTime localtime = LocalDateTime.parse(request.getScheduledTime()); // e.g. "2025-05-09T14:30:00"
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(localtime, zone);
-        LocalDateTime utcTime = zonedDateTime.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+            ZoneId zone = ZoneId.of(request.getTimeZone()); // e.g. "Asia/Kolkata"
+            LocalDateTime localtime = LocalDateTime.parse(request.getScheduledTime()); // e.g. "2025-05-09T14:30:00"
+            ZonedDateTime zonedDateTime = ZonedDateTime.of(localtime, zone);
+//            LocalDateTime utcTime = zonedDateTime.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+            Instant utcinstant = zonedDateTime.withZoneSameInstant(ZoneOffset.UTC).toInstant();
+//        LocalDateTime utclocalDateTime = LocalDateTime.ofInstant(utcinstant, ZoneOffset.UTC);
+        Date scheduledDate = Date.from(utcinstant);
 
-        post.setScheduledTime(utcTime);
-//        post.setTimeZone(request.getTimeZone());
-        post.setTitle(request.getTitle());
-        post.setDescription(request.getDescription());
-        post.setPrivacyStatus(request.getPrivacyStatus());
-        post.setFilePath(request.getFilePath());
-        post.setAccessToken(accessToken);
-        return postRepository.save(post);
+        post.setScheduledTime(scheduledDate);
+            post.setTitle(request.getTitle());
+            post.setDescription(request.getDescription());
+            post.setPrivacyStatus(request.getPrivacyStatus());
+            post.setFilePath(request.getFilePath());
+            post.setAccessToken(accessToken);
+            return postRepository.save(post);
     }
 
     @Override
@@ -80,7 +83,7 @@ public class ScheduledPostServiceImpl implements ScheduledPostService {
         case "instagram":
             endpoint = "http://localhost:9093/userModule/instagram/login";
             break;
-        case "youTube":
+        case "youtube":
             endpoint = "http://localhost:9093/userModule/google/youtube-upload";
             body.put("title", post.getTitle());
             body.put("description", post.getDescription());

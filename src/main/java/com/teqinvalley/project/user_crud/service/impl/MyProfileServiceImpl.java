@@ -1,5 +1,6 @@
 package com.teqinvalley.project.user_crud.service.impl;
 
+import com.teqinvalley.project.user_crud.config.MyProfileValidation;
 import com.teqinvalley.project.user_crud.model.MyProfile;
 import com.teqinvalley.project.user_crud.repository.MyProfileRepository;
 import com.teqinvalley.project.user_crud.service.MyProfileService;
@@ -15,7 +16,10 @@ public class MyProfileServiceImpl implements MyProfileService {
 
     @Autowired
     private MyProfileRepository myProfileRepo;
-    private static final long MAX_SIZE = 2 * 1024 * 1024; // 2 MB
+
+    @Autowired
+    private MyProfileValidation validation;
+
 
     @Override
     public MyProfile getProfileByEmail(String email) {
@@ -59,29 +63,47 @@ public class MyProfileServiceImpl implements MyProfileService {
             throw  new RuntimeException("No file Uploaded");
 //            String type
         }
-        String base64 = Base64.getEncoder().encodeToString(image.getBytes());
         String extension = getFileExtension(image.getOriginalFilename());
-        if(!"jpg".equalsIgnoreCase(extension)){
-            throw  new IllegalArgumentException("Only JPG images allowed");
+//        if(!"jpg".equalsIgnoreCase(extension)){
+//            throw  new IllegalArgumentException("Only JPG images allowed");
+//        }
+        if(!validation.getAllowedTypes().contains(extension.toLowerCase())){
+            throw new IllegalArgumentException("only" +validation.getMaxSizeKb()+ "KB ALLOWED");
         }
-        if(image.getSize()>MAX_SIZE){
-            throw new IllegalArgumentException("File size exceeds 2MB");
-        }
+//        if(image.getSize()>MAX_SIZE){
+//            throw new IllegalArgumentException("File size exceeds 2MB");
+//        }
+        String base64 = Base64.getEncoder().encodeToString(image.getBytes());
         MyProfile profile = getProfileByEmail(email);
         profile.setProfilePictureUrl(base64);
         myProfileRepo.save(profile);
+        System.out.println("Uploaded image size: " + image.getSize() + " bytes");
+
+
 
     }
 
     @Override
     public void uploadSignature(String email, MultipartFile signature) {
         try {
-            String content = new String(signature.getBytes());
-            if(content.length()>1000){
-                throw new RuntimeException("signature length too long");
+//            String content = new String(signature.getBytes());
+//            if(content.length()>1000){
+//                throw new RuntimeException("signature length too long");
+//            }
+            String extension = getFileExtension(signature.getOriginalFilename());
+            long maxsizeBytes = validation.getMaxSizeKb() * 1024;
+            if(signature.getSize()>maxsizeBytes){
+                throw new RuntimeException("signature file exceeds:" +validation.getMaxSizeKb()+ "KB ALLOWED");
             }
+
+            if(!validation.getAllowedTypes().contains(extension.toLowerCase())){
+                throw new IllegalArgumentException("Only" +validation.getAllowedTypes()+ "files allowed");
+            }
+
+            String base64 = Base64.getEncoder().encodeToString(signature.getBytes());
+
             MyProfile profile = getProfileByEmail(email);
-            profile.setSignature(content);
+            profile.setSignature(base64);
             myProfileRepo.save(profile);
 
         } catch (IOException e) {

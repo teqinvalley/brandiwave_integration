@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Document(collection = "scheduled_posts")
 @Data
@@ -14,7 +15,7 @@ public class ScheduledPosts {
     private String id;
     private String platform;
     private String timeZone;
-    private LocalDateTime scheduledTime;
+    private Date scheduledTime;
     private  boolean posted = false;
     private String title;                // for YouTube
     private String description;          // for YouTube or optional caption for Instagram

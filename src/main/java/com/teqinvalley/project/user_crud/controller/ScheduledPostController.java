@@ -35,10 +35,10 @@ public ResponseEntity<ScheduledPosts> scheduleFacebook(@RequestBody ScheduleRequ
         return ResponseEntity.ok(postService.schedule("instagram", request, token  ));
     }
 
-    @PostMapping("/youTube")
+    @PostMapping("/youtube")
     public ResponseEntity<ScheduledPosts> scheduleYoutube(@RequestBody ScheduleRequestDto request, @RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
-        return ResponseEntity.ok(postService.schedule("youTube", request, token));
+        return ResponseEntity.ok(postService.schedule("youtube", request, token));
     }
 
 }
