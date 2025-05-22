@@ -90,6 +90,10 @@ public class FacebookAccountServiceImpl implements IFacebookAccountService {
 
 
     public FacebookEngagementResponse getTotalFollowersCount(UserEngagementRequestDto userEngagementRequestDto,FacebookEngagementResponse facebookData) throws JsonProcessingException {
+
+        if(userEngagementRequestDto.getFacebookPageAccessToken()==null) {
+            userEngagementRequestDto.setFacebookPageAccessToken(userEngagementRequestDto.getFacebookAccessToken());
+        }
         String GRAPH_API_URL = "https://graph.facebook.com/v19.0/me/accounts?fields=id,name,access_token&access_token=" + userEngagementRequestDto.getFacebookPageAccessToken();
         RestTemplate restTemplate = new RestTemplate();
         String response = restTemplate.getForObject(GRAPH_API_URL, String.class);
