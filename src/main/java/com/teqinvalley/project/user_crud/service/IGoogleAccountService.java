@@ -1,7 +1,7 @@
 package com.teqinvalley.project.user_crud.service;
 
-import com.teqinvalley.project.user_crud.dto.request.FacebookAccountDto;
 import com.teqinvalley.project.user_crud.dto.request.GoogleAccountDto;
+import com.teqinvalley.project.user_crud.dto.request.UserEngagementRequestDto;
 import com.teqinvalley.project.user_crud.dto.request.YoutubeVideoUploadDto;
 import org.springframework.http.ResponseEntity;
 
@@ -21,5 +21,5 @@ public interface IGoogleAccountService {
 
     void handleGoogleCallback(String code, String stateToken, HttpServletResponse response) throws IOException;
 
-
+    Map<String, Object> getYoutubeEngagement(UserEngagementRequestDto youtubeEngagementRequestDto);
 }

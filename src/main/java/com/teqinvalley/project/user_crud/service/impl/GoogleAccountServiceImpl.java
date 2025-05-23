@@ -1,13 +1,13 @@
 package com.teqinvalley.project.user_crud.service.impl;
 
-import com.teqinvalley.project.user_crud.dto.request.FacebookAccountDto;
+
 import com.teqinvalley.project.user_crud.dto.request.GoogleAccountDto;
+import com.teqinvalley.project.user_crud.dto.request.UserEngagementRequestDto;
 import com.teqinvalley.project.user_crud.dto.request.YoutubeVideoUploadDto;
-import com.teqinvalley.project.user_crud.model.FacebookAccount;
+import com.teqinvalley.project.user_crud.dto.response.YoutubeEngagementResponse;
 import com.teqinvalley.project.user_crud.model.GoogleAccount;
 import com.teqinvalley.project.user_crud.model.UserModel;
 import com.teqinvalley.project.user_crud.model.YoutubeVideoUpload;
-import com.teqinvalley.project.user_crud.repository.FacebookAccountRepository;
 import com.teqinvalley.project.user_crud.repository.GoogleAccountRepository;
 import com.teqinvalley.project.user_crud.repository.UserRepository;
 import com.teqinvalley.project.user_crud.repository.YoutubeUploadRepository;
@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -148,7 +149,9 @@ public class GoogleAccountServiceImpl implements IGoogleAccountService {
             System.out.println("DEBUG >>> Response Status: " + uploadResponse.getStatusCode());
             System.out.println("DEBUG >>> Response Body: " + uploadResponse.getBody());
 
+            Map<String,Object> channelDetail=getChannelId(accessToken);
             videouploaded.setUploadStatus("Uploaded");
+            videouploaded.setChannelId((String) channelDetail.get("id"));
             youtubeUploadRepository.save(videouploaded);
             return ResponseEntity.ok("Video uploaded successfully: " + response.getBody());
 
@@ -165,7 +168,7 @@ public class GoogleAccountServiceImpl implements IGoogleAccountService {
         String googleOAuthUrl = "https://accounts.google.com/o/oauth2/auth" +
                 "?client_id=" + googleAppId +
                 "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
-                "&scope="+ URLEncoder.encode("https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtubepartner https://www.googleapis.com/auth/youtube.channel-memberships.creator https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube.readonly", StandardCharsets.UTF_8) +
+                "&scope="+ URLEncoder.encode("https://www.googleapis.com/auth/yt-analytics.readonly https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtubepartner https://www.googleapis.com/auth/youtube.channel-memberships.creator https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube.readonly", StandardCharsets.UTF_8) +
                 "&response_type=code" +
                 "&state=" + URLEncoder.encode(token, StandardCharsets.UTF_8); // ✅ include JWT as 'state'
         System.out.println("red uri"+redirectUri);
@@ -223,6 +226,52 @@ public class GoogleAccountServiceImpl implements IGoogleAccountService {
 
     }
 
+    @Override
+    public Map<String, Object> getYoutubeEngagement(UserEngagementRequestDto youtubeEngagementRequestDto) {
+        RestTemplate restTemplate = new RestTemplate();
+        Map<String, Object> channelDetail = getChannelId(youtubeEngagementRequestDto.getGoogleAccessToken());
+        System.out.println("channelDetail: " + channelDetail);
+        List<Map<String, Object>> items = (List<Map<String, Object>>) channelDetail.get("items");
+
+        String channelId = null;
+        Map<String, Object> statistics = null;
+        if (items != null && !items.isEmpty()) {
+            channelId = (String) items.get(0).get("id");
+            Map<String, Object> channelData = items.get(0); // Get first channel entry
+            statistics = (Map<String, Object>) channelData.get("statistics");
+        }
+        System.out.println("Channel ID: " + channelId);
+
+        final String API_URL = "https://youtubeanalytics.googleapis.com/v2/reports";
+        String metrics = "views,likes,comments,shares"; // No newline or spaces
+        String url = API_URL + "?dimensions=channel&metrics=" + metrics +
+                "&startDate=" + youtubeEngagementRequestDto.getStartDate() +
+                "&endDate=" + youtubeEngagementRequestDto.getEndDate() +
+                "&ids=channel==" + channelId;
+        System.out.println("API Request URL: " + url);
+
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(youtubeEngagementRequestDto.getGoogleAccessToken());
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+        YoutubeEngagementResponse youtubeData = new YoutubeEngagementResponse();
+        List<List<String>> datalist = (List<List<String>>) response.getBody().get("rows");
+
+        youtubeData.setFollowerCount(statistics.get("subscriberCount").toString());
+        youtubeData.setVideosCount(statistics.get("videoCount").toString());
+        youtubeData.setChannelId(datalist.get(0).get(0));
+        youtubeData.setShareCount(String.valueOf(datalist.get(0).get(4)));
+        youtubeData.setCommentCount(String.valueOf(datalist.get(0).get(3)));
+        youtubeData.setLikeCount(String.valueOf(datalist.get(0).get(2)));
+        youtubeData.setViewCount(String.valueOf(datalist.get(0).get(1)));
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("Youtube", youtubeData);
+        return responseData;
+    }
+
     private Map<String, Object> getGoogleAccountDetails(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://www.googleapis.com/oauth2/v3/userinfo";
@@ -236,5 +285,16 @@ public class GoogleAccountServiceImpl implements IGoogleAccountService {
 
         return response.getBody();
     }
+
+    private Map<String, Object> getChannelId(String token) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+        String url = "https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true";
+        ResponseEntity<Map> response = restTemplate.exchange(url,HttpMethod.GET, entity, Map.class);
+        return response.getBody();
+    }
+
 
 }

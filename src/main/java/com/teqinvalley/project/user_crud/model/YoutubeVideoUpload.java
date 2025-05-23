@@ -15,6 +15,7 @@ public class YoutubeVideoUpload {
     @Id
     private String id;
     private GoogleAccount googleAccountId;
+    private String channelId;
     private String title;
     private String description;
     private String privacyStatus;

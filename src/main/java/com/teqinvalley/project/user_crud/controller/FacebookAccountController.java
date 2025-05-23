@@ -43,7 +43,7 @@ public class FacebookAccountController {
         String facebookOAuthUrl = "https://www.facebook.com/v18.0/dialog/oauth" +
                 "?client_id=" + facebookAppId +
                 "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
-                "&scope=pages_show_list,pages_read_engagement,pages_manage_posts" +
+                "&scope=pages_show_list,pages_read_engagement,pages_manage_posts,pages_read_user_content,pages_manage_metadata" +
                 "&response_type=code" +
                 "&state=" + URLEncoder.encode(token, StandardCharsets.UTF_8); // ✅ include JWT as 'state'
         System.out.println("red uri"+redirectUri);
