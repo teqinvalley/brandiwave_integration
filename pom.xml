@@ -99,6 +99,13 @@
             <artifactId>spring-web</artifactId>
         </dependency>
 
+        <!-- Maven Dependancy-->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>4.4.0</version>
+        </dependency>
+
         <!-- Spring Boot DevTools for easier development -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -134,6 +141,10 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
 
     </dependencies>
 
@@ -143,6 +154,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+
             </plugin>
         </plugins>
     </build>
